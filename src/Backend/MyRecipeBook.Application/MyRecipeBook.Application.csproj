@@ -19,4 +19,8 @@
     <ProjectReference Include="..\MyRecipeBook.Domain\MyRecipeBook.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Services\Cryptography\" />
+  </ItemGroup>
+
 </Project>

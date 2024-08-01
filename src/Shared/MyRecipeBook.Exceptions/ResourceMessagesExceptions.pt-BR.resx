@@ -126,13 +126,22 @@
   <data name="EMAIL_INVALID" xml:space="preserve">
     <value>O endereço digitado não é um e-mail válido</value>
   </data>
+  <data name="EMAIL_OR_PASSWORD_INVALID" xml:space="preserve">
+    <value>E-mail e/ou senha inválidos</value>
+  </data>
   <data name="NAME_EMPTY" xml:space="preserve">
     <value>O nome não poder estar vazio</value>
   </data>
-  <data name="PASSWORD_INVALID" xml:space="preserve">
+  <data name="NO_TOKEN" xml:space="preserve">
+    <value>Token Inválido</value>
+  </data>
+  <data name="PASSWORD_MUST_BE_THAN_6_CHARACTERS" xml:space="preserve">
     <value>A senha deve possuir 6 ou mais caracteres</value>
   </data>
   <data name="UNKNOWN_ERROR" xml:space="preserve">
     <value>Erro desconhecido</value>
+  </data>
+  <data name="USER_WITHOUT_PERMISSION_ACCESS_RESOURCE" xml:space="preserve">
+    <value>Usuário sem permissão para acessar este recurso</value>
   </data>
 </root>
