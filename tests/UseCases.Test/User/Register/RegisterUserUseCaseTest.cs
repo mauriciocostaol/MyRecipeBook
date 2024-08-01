@@ -2,6 +2,7 @@
 using ComonTestUtilities.Mapper;
 using ComonTestUtilities.Repositories;
 using ComonTestUtilities.Requests;
+using ComonTestUtilities.Tokens;
 using FluentAssertions;
 using MyRecipeBook.Application.UseCases.User.Register;
 using MyRecipeBook.Exceptions;
@@ -19,7 +20,9 @@ public class RegisterUserUseCaseTest
         var result = await useCase.Execute(request);
 
         result.Should().NotBeNull();
+        result.Tokens.Should().NotBeNull();
         result.Name.Should().Be(request.Name);
+        result.Tokens.AccessToken.Should().NotBeNullOrEmpty();
     }
 
     [Fact]
@@ -64,11 +67,12 @@ public class RegisterUserUseCaseTest
         var writeOnlyRepostory = UserWriteOnlyRepositoryBuilder.Build();
         var unitOfWork = UnitOfWorkBuilder.Build();
         var readOnlyRepostoryBuilder = new UserReadOnlyRepositoryBuilder();
+        var accessTokenGenerator = JwtTokenGeneratorBuilder.Build();
 
-        if(!string.IsNullOrEmpty(email))
+        if (!string.IsNullOrEmpty(email))
             readOnlyRepostoryBuilder.ExistActiveUserWithEmail(email);
 
 
-        return new RegisterUserUseCase(mapper, writeOnlyRepostory, readOnlyRepostoryBuilder.Build(), passwordEncripter, unitOfWork);
+        return new RegisterUserUseCase(mapper, writeOnlyRepostory, readOnlyRepostoryBuilder.Build(), passwordEncripter, unitOfWork,accessTokenGenerator);
     }
 }
