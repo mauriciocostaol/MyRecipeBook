@@ -4,9 +4,16 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MyRecipeBook.Domain.Repositories;
 using MyRecipeBook.Domain.Repositories.User;
+using MyRecipeBook.Domain.Security.Cryptography;
+using MyRecipeBook.Domain.Security.Tokens;
+using MyRecipeBook.Domain.Services.LoggedUser;
 using MyRecipeBook.Infrastructutre.DataAccess;
 using MyRecipeBook.Infrastructutre.DataAccess.Repositories;
 using MyRecipeBook.Infrastructutre.Extension;
+using MyRecipeBook.Infrastructutre.Security.Cryptography;
+using MyRecipeBook.Infrastructutre.Security.Tokens.Access.Generator;
+using MyRecipeBook.Infrastructutre.Security.Tokens.Access.Validator;
+using MyRecipeBook.Infrastructutre.Services.LoggedUser;
 using System.Reflection;
 
 namespace MyRecipeBook.Infrastructutre;
@@ -14,13 +21,15 @@ public static class DependencyInjectionExtension
 {
     public static void AddInfrastructure(this IServiceCollection services,IConfiguration configuration)
     {
+        AddPasswordEncripter(services, configuration);
         AddRepositories(services);
-
+        AddTokens(services, configuration);
         if (configuration.IsUnitTestEnvironment())
             return;
 
         AddDbContext(services,configuration);
-        AddFluentMigrator(services,configuration);  
+        AddFluentMigrator(services,configuration);
+     
 
     }
 
@@ -38,6 +47,8 @@ public static class DependencyInjectionExtension
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IUserWriteOnlyRepository, UserRepository>();
         services.AddScoped<IUserReadOnlyRepository, UserRepository>();
+        services.AddScoped<IUserUpdateOnlyRepository, UserRepository>();
+        services.AddScoped<ILoggedUser,LoggedUser>();
 
     }
 
@@ -51,5 +62,21 @@ public static class DependencyInjectionExtension
             .WithGlobalConnectionString(connectionString)
             .ScanIn(Assembly.Load("MyRecipeBook.Infrastructutre")).For.All();
         });
+    }
+
+
+    private static void AddTokens(IServiceCollection services,IConfiguration configuration)
+    {
+        var expirationTimeMinutes = configuration.GetValue<uint>("Settings:Jwt:ExpirationTimeMinutes");
+        var signingKey = configuration.GetValue<string>("Settings:Jwt:SigningKey");
+
+        services.AddScoped<IAccessTokenGenerator>(option => new JwtTokenGenerator(expirationTimeMinutes, signingKey!));
+        services.AddScoped<IAccessTokenValidator>(option => new JwtTokenValidator(signingKey!));
+    }
+
+    private static void AddPasswordEncripter(IServiceCollection services, IConfiguration configuration)
+    {
+        var additionalKey = configuration.GetValue<string>("Settings:Password:AdditionalKey");
+        services.AddScoped<IPasswordEncripter>(option => new SHA512Encripter(additionalKey!));
     }
 }
