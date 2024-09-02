@@ -4,6 +4,7 @@ using ComonTestUtilities.Repositories;
 using ComonTestUtilities.Requests;
 using FluentAssertions;
 using MyRecipeBook.Application.UseCases.User.Update;
+using MyRecipeBook.Domain.Extensions;
 using MyRecipeBook.Exceptions;
 using MyRecipeBook.Exceptions.ExceptionsBase;
 
@@ -39,7 +40,7 @@ public class UpdateUserUseCaseTest
         Func<Task> act = async () => { await useCase.Execute(request); };
 
         (await act.Should().ThrowAsync<ErrorOnValidationException>())
-        .Where(e => e.ErrorMessages.Count == 1 && e.ErrorMessages.Contains(ResourceMessagesExceptions.NAME_EMPTY));
+        .Where(e => e.GetErrorMessages().Count == 1 && e.GetErrorMessages().Contains(ResourceMessagesExceptions.NAME_EMPTY));
 
         user.Name.Should().NotBe(request.Name);
         user.Name.Should().NotBe(request.Email);
@@ -60,7 +61,7 @@ public class UpdateUserUseCaseTest
         Func<Task> act = async () => { await useCase.Execute(request); };
 
         (await act.Should().ThrowAsync<ErrorOnValidationException>())
-        .Where(e => e.ErrorMessages.Count == 1 && e.ErrorMessages.Contains(ResourceMessagesExceptions.EMAIL_EMPTY));
+        .Where(e => e.GetErrorMessages().Count == 1 && e.GetErrorMessages().Contains(ResourceMessagesExceptions.EMAIL_EMPTY));
 
         user.Name.Should().NotBe(request.Name);
         user.Name.Should().NotBe(request.Email);
@@ -68,6 +69,7 @@ public class UpdateUserUseCaseTest
 
     }
 
+    [Fact]
     public async Task ErrorOnUpdateUserWhenEmailAlreadyRegistered()
     {
 
@@ -75,27 +77,28 @@ public class UpdateUserUseCaseTest
 
         var request = RequestUpdateUserJsonBuilder.Build();
 
-        var useCase = CreateUseCase(user, user.Email);
+        var useCase = CreateUseCase(user, request.Email);
 
         Func<Task> act = async () => { await useCase.Execute(request); };
 
         (await act.Should().ThrowAsync<ErrorOnValidationException>())
-        .Where(e => e.ErrorMessages.Count == 1 && e.ErrorMessages.Contains(ResourceMessagesExceptions.EMAIL_ALREADY_REGISTERED));
+        .Where(e => e.GetErrorMessages().Count == 1 && e.GetErrorMessages().Contains(ResourceMessagesExceptions.EMAIL_ALREADY_REGISTERED));
 
         user.Name.Should().NotBe(request.Name);
         user.Name.Should().NotBe(request.Email);
 
     }
     
-    private UpdateUserUseCase CreateUseCase(MyRecipeBook.Domain.Entities.User user, string? email = null)
+    private static UpdateUserUseCase CreateUseCase(MyRecipeBook.Domain.Entities.User user, string? email = null)
     {
         var loggedUser = LoggedUserBuilder.Build(user);
         var userUpdateOnlyRepository = new UserUpdateOnlyRepositoryBuilder().GetById(user).Build();
-        var userReadOnlyRepository = new UserReadOnlyRepositoryBuilder();
         var unitOfWork = UnitOfWorkBuilder.Build();
 
+        var userReadOnlyRepositoryBuilder = new UserReadOnlyRepositoryBuilder();
+        if (email.NotEmpty())
+            userReadOnlyRepositoryBuilder.ExistActiveUserWithEmail(email!);
 
-
-        return new UpdateUserUseCase(loggedUser, userUpdateOnlyRepository, userReadOnlyRepository.Build(), unitOfWork);
+        return new UpdateUserUseCase(loggedUser, userUpdateOnlyRepository, userReadOnlyRepositoryBuilder.Build(), unitOfWork);
     }
 }

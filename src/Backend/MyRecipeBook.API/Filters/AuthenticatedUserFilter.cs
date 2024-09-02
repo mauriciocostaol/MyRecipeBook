@@ -33,7 +33,7 @@ public class AuthenticatedUserFilter: IAsyncAuthorizationFilter
 
             if (exist.IsFalse())
             {
-                throw new MyRecipeBookException(ResourceMessagesExceptions.USER_WITHOUT_PERMISSION_ACCESS_RESOURCE);
+                throw new UnathorizedException(ResourceMessagesExceptions.USER_WITHOUT_PERMISSION_ACCESS_RESOURCE);
             }
 
         }
@@ -60,7 +60,7 @@ public class AuthenticatedUserFilter: IAsyncAuthorizationFilter
 
         if (string.IsNullOrWhiteSpace(authentication))
         {
-            throw new MyRecipeBookException(ResourceMessagesExceptions.NO_TOKEN);
+            throw new UnathorizedException(ResourceMessagesExceptions.NO_TOKEN);
         }
 
         return authentication["Bearer".Length..].Trim();

@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Options;
-using MyRecipeBook.Communication.Requests;
+﻿using MyRecipeBook.Communication.Requests;
 using MyRecipeBook.Domain.Extensions;
 using MyRecipeBook.Domain.Repositories;
 using MyRecipeBook.Domain.Repositories.User;
@@ -43,7 +42,7 @@ public class UpdateUserUseCase : IUpdateUserUseCase
     {
         var validator = new UpdateUserValidator();
 
-        var result = validator.Validate(request);
+        var result = await validator.ValidateAsync(request);
 
         if(currentEmail.Equals(request.Email).IsFalse() )
         {

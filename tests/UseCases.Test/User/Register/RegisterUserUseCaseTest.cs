@@ -35,7 +35,7 @@ public class RegisterUserUseCaseTest
         Func<Task> act = async () => await useCase.Execute(request);
 
         (await act.Should().ThrowAsync<ErrorOnValidationException>())
-             .Where(error => error.ErrorMessages.Count == 1 && error.ErrorMessages.Contains(ResourceMessagesExceptions.EMAIL_ALREADY_REGISTERED));
+             .Where(error => error.GetErrorMessages().Count == 1 && error.GetErrorMessages().Contains(ResourceMessagesExceptions.EMAIL_ALREADY_REGISTERED));
        
        
 
@@ -52,7 +52,7 @@ public class RegisterUserUseCaseTest
         Func<Task> act = async () => await useCase.Execute(request);
 
         (await act.Should().ThrowAsync<ErrorOnValidationException>())
-             .Where(error => error.ErrorMessages.Count == 1 && error.ErrorMessages.Contains(ResourceMessagesExceptions.NAME_EMPTY));
+             .Where(error => error.GetErrorMessages().Count == 1 && error.GetErrorMessages().Contains(ResourceMessagesExceptions.NAME_EMPTY));
 
 
 

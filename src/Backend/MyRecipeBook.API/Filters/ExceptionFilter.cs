@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using MyRecipeBook.Communication.Responses;
 using MyRecipeBook.Exceptions;
 using MyRecipeBook.Exceptions.ExceptionsBase;
-using System;
 using System.Net;
 
 namespace MyRecipeBook.API.Filters;
@@ -12,9 +11,9 @@ public class ExceptionFilter : IExceptionFilter
 {
     public void OnException(ExceptionContext context)
     {
-        if (context.Exception is MyRecipeBookException)
+        if (context.Exception is MyRecipeBookException myRecipeBookException)
         {
-            HandleProjectException(context);
+            HandleProjectException(myRecipeBookException,context);
         }
         else
         {
@@ -22,20 +21,10 @@ public class ExceptionFilter : IExceptionFilter
         }
     }
 
-    private static void HandleProjectException(ExceptionContext context)
+    private static void HandleProjectException(MyRecipeBookException myRecipeBookException, ExceptionContext context)
     {
-        if (context.Exception is InvalidLoginException)
-        {
-
-            context.HttpContext.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-            context.Result = new UnauthorizedObjectResult(new ResponseErrorJson(context.Exception.Message));
-        }
-        else if (context.Exception is ErrorOnValidationException)
-        {
-            var exception = context.Exception as ErrorOnValidationException;
-            context.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-            context.Result = new BadRequestObjectResult(new ResponseErrorJson(exception!.ErrorMessages));
-        }
+        context.HttpContext.Response.StatusCode = (int)myRecipeBookException.GetStatusCode();
+        context.Result = new ObjectResult(new ResponseErrorJson(myRecipeBookException.GetErrorMessages()));
 
     }
 

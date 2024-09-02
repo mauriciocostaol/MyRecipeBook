@@ -2,6 +2,7 @@ using Moq;
 using MyRecipeBook.Domain.Entities;
 using MyRecipeBook.Domain.Repositories.User;
 
+namespace ComonTestUtilities.Repositories;
 public class UserUpdateOnlyRepositoryBuilder
 {
     private readonly Mock<IUserUpdateOnlyRepository> _repository;

@@ -1,7 +1,6 @@
 ﻿using ComonTestUtilities.Requests;
 using FluentAssertions;
 using MyRecipeBook.Application.UseCases.User.Update;
-using MyRecipeBook.Communication.Requests;
 using MyRecipeBook.Exceptions;
 
 namespace Validators.Test.User.Update;

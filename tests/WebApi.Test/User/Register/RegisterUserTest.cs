@@ -1,10 +1,8 @@
 ﻿using ComonTestUtilities.Requests;
 using FluentAssertions;
-using Microsoft.AspNetCore.Mvc.Testing;
 using MyRecipeBook.Exceptions;
 using System.Globalization;
 using System.Net;
-using System.Net.Http.Json;
 using System.Text.Json;
 using WebApi.Test.InlineData;
 
@@ -20,7 +18,7 @@ public class RegisterUserTest : MyRecipeBookClassFixture
     {
         var request = RequestRegisterUserJsonBuilder.Build();
 
-        var response = await DoPost(method, request);
+        var response = await DoPost(method:method, request:request);
 
         response.StatusCode.Should().Be(HttpStatusCode.Created);
 
@@ -42,7 +40,7 @@ public class RegisterUserTest : MyRecipeBookClassFixture
 
        
 
-        var response = await DoPost(method, request,culture);
+        var response = await DoPost(method:method,request:request,culture:culture);
 
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
 

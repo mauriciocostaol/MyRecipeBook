@@ -1,7 +1,6 @@
 ﻿using ComonTestUtilities.Tokens;
 using FluentAssertions;
 using MyRecipeBook.Communication.Requests;
-using MyRecipeBook.Infrastructutre.Security.Tokens.Access.Generator;
 using System.Net;
 
 namespace WebApi.Test.User.ChangePassword;

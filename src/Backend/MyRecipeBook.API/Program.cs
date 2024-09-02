@@ -13,12 +13,14 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
+const string TokenType = "Bearer";
 builder.Services.AddControllers().AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new StringConverter()));
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    options.OperationFilter<IdsFilter>();
+    options.AddSecurityDefinition(TokenType, new OpenApiSecurityScheme
     {
         Description = @"JWT Authorization header using the Bearer scheme.
                       Enter 'Bearer' [space] and then your token in the text input below.
@@ -26,7 +28,7 @@ builder.Services.AddSwaggerGen(options =>
         Name = "Authorization",
         In = ParameterLocation.Header,
         Type = SecuritySchemeType.ApiKey,
-        Scheme = "Bearer"
+        Scheme = TokenType
 
     });
     options.AddSecurityRequirement(new OpenApiSecurityRequirement
@@ -37,10 +39,10 @@ builder.Services.AddSwaggerGen(options =>
                 Reference = new OpenApiReference
                 {
                     Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
+                    Id = TokenType
                 },
                     Scheme = "oauth2",
-                    Name = "Bearer",
+                    Name = TokenType,
                     In = ParameterLocation.Header
              },
                new List<string>()
@@ -72,7 +74,7 @@ app.UseAuthorization();
 app.MapControllers();
 
 MigrateDatabase();
-app.Run();
+await app.RunAsync();
 void MigrateDatabase()
 {
     if (builder.Configuration.IsUnitTestEnvironment())
@@ -82,11 +84,7 @@ void MigrateDatabase()
     var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
     DatabaseMigration.Migrate(connectionString, serviceScope.ServiceProvider);
 }
-
 public partial class Program
 {
-    protected Program()
-    {
-
-    }
+   
 }
