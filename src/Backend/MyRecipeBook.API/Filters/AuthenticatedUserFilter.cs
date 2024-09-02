@@ -54,7 +54,7 @@ public class AuthenticatedUserFilter: IAsyncAuthorizationFilter
         }
     }
 
-    private string TokenOnRequest(AuthorizationFilterContext context)
+    private static string TokenOnRequest(AuthorizationFilterContext context)
     {
         var authentication = context.HttpContext.Request.Headers.Authorization.ToString();
 

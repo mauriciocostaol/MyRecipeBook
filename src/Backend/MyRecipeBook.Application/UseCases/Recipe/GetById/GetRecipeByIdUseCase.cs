@@ -22,10 +22,10 @@ public class GetRecipeByIdUseCase : IGetRecipeByIdUseCase
     {
         var loggedUser = await _loggedUser.User();
 
-        var recipe = await _repository.GetById(loggedUser,recipeId);
+        var recipe = await _repository.GetById(loggedUser, recipeId);
 
-        if(recipe is null)
-        throw new NotFoundException(ResourceMessagesExceptions.RECIPE_NOT_FOUND);
+        if (recipe is null)
+            throw new NotFoundException(ResourceMessagesExceptions.RECIPE_NOT_FOUND);
 
         return _mapper.Map<ResponseRecipeJson>(recipe);
     }

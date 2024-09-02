@@ -3,10 +3,10 @@ using System.Security.Cryptography;
 using System.Text;
 
 namespace MyRecipeBook.Infrastructutre.Security.Cryptography;
-public class SHA512Encripter: IPasswordEncripter
+public class Sha512Encripter: IPasswordEncripter
 {
     private readonly string _additionalKey;
-    public SHA512Encripter(string additionalKey) => _additionalKey = additionalKey;
+    public Sha512Encripter(string additionalKey) => _additionalKey = additionalKey;
 
     public string Encrypt(string password)
     {
