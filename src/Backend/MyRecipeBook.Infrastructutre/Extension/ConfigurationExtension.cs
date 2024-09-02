@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace MyRecipeBook.Infrastructutre.Extension;
 public static class ConfigurationExtension
